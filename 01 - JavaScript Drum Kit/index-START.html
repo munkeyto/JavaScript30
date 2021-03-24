@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+
+<script>
+  // This code prints the key down event into console with details of the key pressed
+  // window.addEventListener('keydown', function(event) {
+  //   console.log(event);
+  // });
+
+  // This code does the same as above but also provides the keycode.
+  // window.addEventListener('keydown', function(event) {
+  //   console.log(event.keyCode);
+  // });
+
+  // Is there an audio elemt that has a data-key?
+  // Only looking for one sound therefore not using querySelectorAll.
+  
+  function playSound(event) {
+    // We select an audio element from the html (in our case we have many listed above). 
+    // We want to make sure that the audio take we select has a data-key/data-atrribute.
+    // We can use the attribute selector[] to check the data-key assigned to the audio file.
+    const audio = document.querySelector(`audio[data-key="${event.keyCode}"]`);
+    // We now select the .key class so that we can select the correct div associated with the key press.
+    const key = document.querySelector(`.key[data-key="${event.keyCode}"]`);
+    // if you push a key with no audio element associated then you return "null".
+    // We add an if statement to return blank instead of null.
+    if(!audio) return; // stop the function early
+    // console.log(audio);
+    // Now that we have the audio we can play it.
+    audio.currentTime = 0; //rewind to the start
+    audio.play();
+    // console.log(key);
+    key.classList.add('playing'); // this adds another class (.playing) to the current selected div.
+    // other examples key.classList.remove('playing'); and key.classList.toggle('playing');
+  }
+  
+  // This function removes the "playing" class.
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return; //skip log if not 'transform'
+    // console.log(e.propertyName);
+    // 'this' is a representitive of what is has been called against a listener. e.g. the key
+    this.classList.remove('playing');
+  }
+  
+  const keys = document.querySelectorAll('.key'); // we select all our keys
+  // you can't listen to all elements at the same time therefore we have to iterate.
+  // 
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+  
+  // we sepatare the key down and the playSound function in case we want to playsound through another means.
+  window.addEventListener('keydown', playSound); 
+</script>
+</body>
+</html>
